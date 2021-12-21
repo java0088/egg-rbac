@@ -7,6 +7,5 @@ module.exports = app => {
     role_id: { type: STRING, comment: '权限ID' },
     password: { type: STRING, comment: '密码' }
   })
-
   return User
 }
