@@ -1,4 +1,5 @@
 const { Service } = require('egg')
+const { Op } = require('sequelize')
 const PAGE_SIZE = 15
 module.exports = class BaseService extends Service {
   
@@ -34,19 +35,40 @@ module.exports = class BaseService extends Service {
     return data
   }
   // 添加 
-  async add() {
-
+  async add(payload, where) {
+    const { ctx, db } = this
+    if (where) {
+      const res = await ctx.model[db].findOne({ where })
+      if (res) ctx.throw(404, ctx.__('data Exists'))
+    }
+    return await ctx.model[db].create(payload)
   }
   // 修改
-  async update() {
-
+  async update(payload, where) {
+    const { ctx, db } = this
+    const id = payload.id
+    if (id < 1) ctx.throw(404, ctx.__('forbidden'))
+    const data = await ctx.model[db].findByPk(id)
+    if (!data) ctx.throw(404, ctx.__('noData'))
+    if (where) {
+      const res = await ctx.model[db].findOne({ where })
+      if (res && res.id !== id) ctx.throw(404, ctx.__('dataExists'))
+    }
+    delete payload.id
+    return data.update(payload)
   }
   // 删除
-  async delete() {
-
+  async delete(ids) {
+    const { ctx, db } = this
+    if (!Array.isArray(ids)) ids = [ids]
+    ctx.model.Log.create({ type: 'delete', db, message: JSON.stringify({ ids: ids }) })
+    return ctx.model[db].destroy({ where: { id: { [Op.in]: ids } } })
   }
   // 查看详情
-  async info() {
-
+  async info(where) {
+    const { ctx, db } = this
+    const res = await ctx.model[db].findOne({ where })
+    if (!res) ctx.throw(404, ctx.__('noData'))
+    return res
   }
 }

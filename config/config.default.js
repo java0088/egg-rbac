@@ -133,6 +133,21 @@ module.exports = appInfo => {
   //   }
   // }
 
+  config.security = {
+    csrf: {
+      enable: false,
+      type: 'ctoken', // can be ctoken, referer, all or any, default to ctoken
+      useSession: false, // if useSession set to true, the secret will keep in session instead of cookie
+      ignoreJSON: true, // skip check JSON requests if ignoreJSON set to true
+      cookieName: 'csrfToken', // csrf token's cookie name
+      sessionName: 'csrfToken', // csrf token's session name
+      headerName: 'x-csrf-token', // request csrf token's name in header
+      bodyName: '_csrf', // request csrf token's name in body
+      queryName: '_csrf', // request csrf token's name in query
+      refererWhiteList: [], // referer white list
+    },
+  }
+
   return {
     ...config,
     ...userConfig,

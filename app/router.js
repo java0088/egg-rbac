@@ -10,6 +10,10 @@ module.exports = app => {
   })
   // require('./router/mqtt')(app)
 
-  router.get('/test/page', controller.test.page)
-  router.get('/test/list', controller.test.list)
+  router.post('/test/page', controller.test.page)
+  router.post('/test/list', controller.test.list)
+  router.post('/test/add', controller.test.add)
+  router.post('/test/update', controller.test.update)
+  router.get('/test/info', controller.test.info)
+  router.post('/test/delete', controller.test.delete)
 }
